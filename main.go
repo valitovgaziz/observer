@@ -24,8 +24,9 @@ func init() {
 	// Auto migrate the User model
 	db.AutoMigrate(
 		&Client{},
-		&HistoryOrder{},
 		&DepthOrder{},
+		&OrderBook{},
+		&HistoryOrder{},
 	)
 }
 
@@ -39,6 +40,14 @@ type Client struct {
 type DepthOrder struct {
 	Price   float64 `json:"price"`
 	BaseQty float64 `json:"base_qty"`
+}
+
+type OrderBook struct {
+	id       int64        `json:"id" gorm:"autoincrement"`
+	exchange string       `json:"exchange"`
+	Pair     string       `json:"pair"`
+	asks     []DepthOrder `json:"asks"`
+	bids     []DepthOrder `json:"bids"`
 }
 
 type HistoryOrder struct {
@@ -58,15 +67,14 @@ type HistoryOrder struct {
 }
 
 func SaveOrderBook(c *gin.Context) {
-	var order DepthOrder
-	c.BindJSON(&order)
-	eroor := db.Create(&order)
+	var orderBook OrderBook
+	c.BindJSON(&orderBook)
+	eroor := db.Create(&orderBook)
 	if eroor != nil {
 		c.JSON(400, gin.H{"error": eroor})
 		return
 	}
 	c.JSON(200, gin.H{"message": "Order book saved"})
-	return
 }
 
 func GetOrderBook(c *gin.Context) {
@@ -84,7 +92,6 @@ func SaveOrder(c *gin.Context) {
 		return
 	}
 	c.JSON(200, gin.H{"message": "Order saved"})
-	return
 }
 
 func GetOrderHistory(c *gin.Context) {
