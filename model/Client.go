@@ -1,8 +1,4 @@
-package models
-
-import (
-
-)
+package model
 
 type Client struct {
 	client_name   string `json:"client_name"`

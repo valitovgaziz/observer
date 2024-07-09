@@ -1,10 +1,11 @@
 package main
 
 import (
+	"github.com/valitovgaziz/observer"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	"github.com/jinzhu/gorm/dialects/postgres"
-    "models\"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 var (
@@ -27,8 +28,17 @@ func init() {
 	)
 }
 
-
+func getClients(c *gin.Context) {
+	var clients []Client
+	db.Find(&clients)
+	c.JSON(200, gin.H{"data": clients})
+}
 
 func main() {
+	r := gin.Default()
 
+	r.GET("/clients", getClients)
+
+	r.Run(":8282")
+	fmt.Println("Listening on port 8282")
 }

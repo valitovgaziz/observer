@@ -1,8 +1,5 @@
-package models
+package model
 
-import (
-	
-)
 
 type DepthOrder struct {
 	Price   float64 `json:"price"`
